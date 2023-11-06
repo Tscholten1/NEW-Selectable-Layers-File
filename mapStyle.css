@@ -1,0 +1,57 @@
+/* CSS styles for body and map container */
+html,
+body {
+	padding: 0;
+	margin: 0;
+}
+/* These CSS rules remove padding and margin from the 'html' and 'body' elements. */
+html,
+body {
+	height: 100%;
+	width: 100%;
+}
+/* These rules set the 'html' and 'body' elements to take up 100% of the height and width of the viewport. */
+#map {
+	height: 100%;
+	width: 100%;
+}
+/* This rule sets the 'map' element to take up 100% of the height and width of the viewport. */
+/* CSS styles for Leaflet components */
+.leaflet-control-geocoder-form-no-error {
+	display: none;
+}
+/* This rule hides a specific element with the class 'leaflet-control-geocoder-form-no-error' by setting its display property to 'none'. */
+.leaflet-tile-container {
+	width: auto;
+	height: 100%;
+}
+/* This rule sets the 'leaflet-tile-container' element to have an 'auto' width and take up 100% of the height of its container. */
+/* CSS styles for info, legend, and legend icons */
+.info {
+	padding: 6px 8px;
+	font: 14px/16px Arial, Helvetica, sans-serif;
+	background: white;
+	background: rgba(255, 255, 255, 0.8);
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
+}
+/* These rules define various styles for elements with the class 'info'. */
+.info h4 {
+	margin: 0 0 5px;
+	color: #777;
+}
+/* These rules define styles for 'h4' elements inside elements with the class 'info'. */
+.legend {
+	text-align: left;
+	line-height: 18px;
+	color: #555;
+}
+/* These rules define various styles for elements with the class 'legend'. */
+.legend i {
+	width: 18px;
+	height: 18px;
+	float: left;
+	margin-right: 8px;
+	opacity: 0.7;
+}
+/* These rules define styles for 'i' elements inside elements with the class 'legend'. */

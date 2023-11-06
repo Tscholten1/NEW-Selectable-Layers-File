@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- This line declares the document type and sets the language to English. -->
+<head>
+    <base target="_top">
+    <!-- The 'base' element sets a base URL for relative URLs. The 'target' attribute "_top" specifies that links should open in the full body of the browser. -->
+    <!-- Meta tags for character set and viewport -->
+    <meta charset="utf-8">
+    <!-- This meta tag specifies the character encoding of the document as UTF-8 (Unicode). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- This meta tag defines the viewport settings for responsive design, ensuring the content fits the device's width and starts at a 1:1 scale. -->
+    <!-- Title of the webpage -->
+    <title>Choropleth Tutorial - Leaflet</title>
+    <!-- This sets the title of the webpage that appears in the browser's title bar or tab. -->
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+    <!-- This link tag specifies the favicon (website icon) that is displayed in the browser tab. -->
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- This link loads the Cascading Style Sheets (CSS) file for the Leaflet mapping library from a remote source. -->
+    <!-- Internal CSS styles -->
+    <style>
+        /* CSS styles for body and map container */
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        /* These CSS rules remove padding and margin from the 'html' and 'body' elements. */
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+        }
+        /* These rules set the 'html' and 'body' elements to take up 100% of the height and width of the viewport. */
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        /* This rule sets the 'map' element to take up 100% of the height and width of the viewport. */
+        /* CSS styles for Leaflet components */
+        .leaflet-control-geocoder-form-no-error {
+            display: none;
+        }
+        /* This rule hides a specific element with the class 'leaflet-control-geocoder-form-no-error' by setting its display property to 'none'. */
+        .leaflet-tile-container {
+            width: auto;
+            height: 100%;
+        }
+        /* This rule sets the 'leaflet-tile-container' element to have an 'auto' width and take up 100% of the height of its container. */
+        /* CSS styles for info, legend, and legend icons */
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        /* These rules define various styles for elements with the class 'info'. */
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+        /* These rules define styles for 'h4' elements inside elements with the class 'info'. */
+        .legend {
+            text-align: left;
+            line-height: 18px;
+            color: #555;
+        }
+        /* These rules define various styles for elements with the class 'legend'. */
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+        /* These rules define styles for 'i' elements inside elements with the class 'legend'. */
+    </style>
+</head>
+<body>
+    <!-- Map container -->
+    <div id='map'></div>
+    <!-- This creates a 'div' element with the id 'map' to serve as the container for the map. -->
+    <!-- Leaflet JavaScript libraries -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <!-- These script tags load the Leaflet JavaScript libraries and the Leaflet Geocoder library from remote sources. -->
+    <!-- External JavaScript files for data -->
+    <script type="text/javascript" src="./data/lineJSON.js"></script>
+    <script type="text/javascript" src="./data/pointJSON.js"></script>
+    <script type="text/javascript" src="./data/polygonJSON.js"></script>
+    <script type="text/javascript" src="./data/nepalJSON.js"></script>
+    <script type="text/javascript" src="./data/statesJSON.js"></script>
+	
+	<!-- BEGIN: EXAMPLE ADDING MORE LAYERS OF DATA -->
+	<script type="text/javascript" src="./data/lineJSONTEST.js"></script>
+    <script type="text/javascript" src="./data/pointJSONTEST.js"></script>
+    <script type="text/javascript" src="./data/polygonJSONTEST.js"></script>
+    <script type="text/javascript" src="./data/nepalJSONTEST.js"></script>
+    <script type="text/javascript" src="./data/statesJSONTEST.js"></script>
+	<!-- END: EXAMPLE ADDING MORE LAYERS OF DATA -->
+		
+    <!-- These script tags load external JavaScript files for data from relative paths. -->
+    <script type="text/javascript">
+        // ChoroplethMap class definition
+        class ChoroplethMap {
+            constructor() {
+                // Map and layer variables
+                this.map = null;
+                this.osmLayer = null;
+				this.singleMarker = null;
+				//<!-- BEGIN: EXAMPLE ADDING MORE LAYERS OF DATA -->
+                this.singleMarkerTEST = null;
+				//<!-- END: EXAMPLE ADDING MORE LAYERS OF DATA -->
+                this.popup = null;
+                this.CartoDB_DarkMatter = null;
+                this.googleStreets = null;
+                this.googleSat = null;
+                this.Stamen_Watercolor = null;
+                this.lineOBJECT = null;
+                this.pointOBJECT = null;
+                this.nepalOBJECT = null;
+                this.polygonOBJECT = null;
+				this.statesOBJECT = null;
+				//<!-- BEGIN: EXAMPLE ADDING MORE LAYERS OF DATA -->
+                this.lineOBJECTTEST = null;
+                this.pointOBJECTTEST = null;
+                this.nepalOBJECTTEST = null;
+                this.polygonOBJECTTEST = null;					
+				this.statesOBJECTTEST = null;					
+				//<!-- END: EXAMPLE ADDING MORE LAYERS OF DATA -->
+                this.info = null;
+            }
+            // This is a JavaScript class definition for the ChoroplethMap.
+            // It defines variables and methods for managing the map and its data.
+            // Method to initialize the map
+            initMap() {
+                // Creating a Leaflet map centered at specific coordinates
+                this.map = L.map('map').setView([28.183303761640847, 0.35412466140639], 2.25);
+                // This creates a Leaflet map and sets its initial view centered at specific latitude and longitude coordinates.
+                // Setting minimum and maximum zoom levels for the map
+                this.map.options.minZoom = 2.25;
+                this.map.options.maxZoom = 19;
+                // These lines set the minimum and maximum zoom levels for the map.
+                // OpenStreetMap tile layer
+                this.osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                });
+                // This creates a tile layer using OpenStreetMap tiles and specifies the attribution for the map data.
+                // Adding OpenStreetMap layer to the map
+                this.osmLayer.addTo(this.map);
+                // This adds the OpenStreetMap layer to the map.
+
+                // Creating a single marker and adding it to the map
+                this.singleMarker = L.marker([28.25255, 83.97669]);
+                this.singleMarker.addTo(this.map);
+                // This creates a single marker at specific coordinates and adds it to the map.
+                // Creating a popup for the marker
+                this.popup = this.singleMarker.bindPopup('This is a popup');
+                this.popup.addTo(this.map);
+                // This creates a popup associated with the marker and adds it to the map.
+				
+				//<!-- BEGIN: EXAMPLE ADDING MORE LAYERS OF DATA -->
+				
+                // Creating a single marker and adding it to the map
+                this.singleMarkerTEST = L.marker([33.25255, 86.97669]);
+                this.singleMarkerTEST.addTo(this.map);
+                // This creates a single marker TEST at specific coordinates and adds it to the map.
+                // Creating a popup for the marker
+                this.popupTEST = this.singleMarkerTEST.bindPopup('This is a popup TEST');
+                this.popupTEST.addTo(this.map);
+                // This creates a popup associated with the marker and adds it to the map.
+
+				//<!-- END: EXAMPLE ADDING MORE LAYERS OF DATA -->	
+
+                // CartoDB Dark Matter tile layer
+                this.CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                });
+                // This creates a tile layer using CartoDB Dark Matter tiles and specifies the attribution and other properties.
+                // Google Streets and Satellite tile layers
+                this.googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                });
+                this.googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                });
+                // These create tile layers using Google Maps (Streets and Satellite) and specify properties like maximum zoom levels and subdomains.
+                // Stamen Watercolor tile layer
+                this.Stamen_Watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
+                    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    subdomains: 'abcd',
+                    minZoom: 1,
+                    maxZoom: 16,
+                    ext: 'jpg'
+                });
+				
+                // This creates a tile layer using Stamen Watercolor tiles and specifies attribution and other properties.
+                // Adding layers to the map
+                this.CartoDB_DarkMatter.addTo(this.map);
+                this.googleStreets.addTo(this.map);
+                this.googleSat.addTo(this.map);
+                this.Stamen_Watercolor.addTo(this.map);
+				
+				//<!-- BEGIN: ORIGINAL ADDING INITIAL LAYERS OF DATA -->
+                // These lines add the tile layers to the map.
+                // GeoJSON layers for different data
+                this.lineOBJECT = L.geoJSON(lineJSON).addTo(this.map);
+                this.pointOBJECT = L.geoJSON(pointJSON).addTo(this.map);
+                this.nepalOBJECT = L.geoJSON(nepalJSON).addTo(this.map);
+                // These lines create GeoJSON layers for various types of data (lines, points, Nepal data) and add them to the map.
+                // GeoJSON layer for US states data
+                this.statesOBJECT = L.geoJson(statesJSON, {
+                    style: this.style.bind(this), // Bind the style function
+                    onEachFeature: this.onEachFeature.bind(this) // Bind the event handlers
+                }).addTo(this.map);
+                // This creates a GeoJSON layer for US states data, specifying style and event handler functions, and adds it to the map.
+                // GeoJSON layer for polygon data
+                this.polygonOBJECT = L.geoJSON(polygonJSON, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup('<b>This is a </b>' + feature.properties.name);
+                    },
+                    style: {
+                        fillColor: 'red',
+                        fillOpacity: 1,
+                        color: 'green'
+                    }
+                }).addTo(this.map);
+				//<!-- END: ORIGINAL ADDING INITIAL LAYERS OF DATA -->
+				
+				//<!-- BEGIN: EXAMPLE ADDING MORE LAYERS OF DATA -->
+				this.lineOBJECTTEST = L.geoJSON(lineJSONTEST).addTo(this.map);
+                this.pointOBJECTTEST = L.geoJSON(pointJSONTEST).addTo(this.map);
+                this.nepalOBJECTTEST = L.geoJSON(nepalJSONTEST).addTo(this.map);
+                // These lines create GeoJSON layers for various types of data (lines, points, Nepal data) and add them to the map.
+                // GeoJSON layer for US states data
+                this.statesOBJECTTEST = L.geoJson(statesJSONTEST, {
+                    style: this.style.bind(this), // Bind the style function
+                    onEachFeature: this.onEachFeature.bind(this) // Bind the event handlers
+                }).addTo(this.map);
+                // This creates a GeoJSON layer for US states data, specifying style and event handler functions, and adds it to the map.
+                // GeoJSON layer for polygon data
+                this.polygonOBJECTTEST = L.geoJSON(polygonJSONTEST, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup('<b>This is a </b>' + feature.properties.name);
+                    },
+                    style: {
+                        fillColor: 'red',
+                        fillOpacity: 1,
+                        color: 'green'
+                    }
+                }).addTo(this.map);				
+				//<!-- END: EXAMPLE ADDING MORE LAYERS OF DATA -->				
+								
+                // This creates a GeoJSON layer for polygon data and specifies popup content and style.
+                // Layers control for switching between base layers
+                const baseLayers = {
+                    "Satellite": this.googleSat,
+                    "Google Map": this.googleStreets,
+                    "Water Color": this.Stamen_Watercolor,
+                    "OpenStreetMap": this.osmLayer,
+                };
+                // This defines a list of base layers and their associated tile layers for the layers control.
+                // Overlays control for showing additional data layers
+                const overlays = {
+					//<!-- BEGIN: ORIGINAL ADDING INITIAL LAYERS OF DATA -->
+                    "Marker": this.singleMarker,
+                    "PointData": this.pointOBJECT,
+                    "LineData": this.lineOBJECT,
+                    "polygondata": this.polygonOBJECT,
+                    "statesData": this.statesOBJECT, //<-----------------------YOU MUST ADD A COMMA AT THE END OF THIS LINE TO CONNECT THE PART OF THE ARRAY YOU ARE ADDING TO, SEE LIKE THE LINES ABOVE THIS ONE? NO COMMA IS NEEDED ON THE LAST LINE OF ADDING DATA, SEE BELOW...
+					//<!-- END: ORIGINAL ADDING INITIAL LAYERS OF DATA -->
+					
+					//<!-- BEGIN: EXAMPLE ADDING MORE LAYERS OF DATA -->	
+                    "MarkerTEST": this.singleMarkerTEST,
+                    "PointDataTEST": this.pointOBJECTTEST,
+                    "LineDataTEST": this.lineOBJECTTEST,
+                    "polygondataTEST": this.polygonOBJECTTEST,
+                    "statesDataTEST": this.statesOBJECTTEST //<------------------------NO COMMA ON THE LAST LINE OF ADDING DATA					
+					//<!-- END: EXAMPLE ADDING MORE LAYERS OF DATA -->					
+                };
+                // This defines a list of overlay layers and their associated map data for the layers control.
+                L.control.layers(baseLayers, overlays).addTo(this.map);
+                // This adds the layers control to the map.
+                // Adding geocoder control to the map
+                L.Control.geocoder().addTo(this.map);
+                // This adds a geocoder control to the map.
+                // Info control for displaying information
+                this.info = L.control();
+                this.info.onAdd = function (map) {
+                    this._div = L.DomUtil.create('div', 'info');
+                    this._div.innerHTML = '<h4>US Population Density</h4>Hover over a state';
+                    return this._div;
+                };
+                this.info.addTo(this.map);
+                // This defines and adds an info control to display information about the map.
+                // Legend control for displaying legend information
+                const legend = L.control({
+                    position: 'bottomright'
+                });
+                legend.onAdd = function (map) {
+                    const div = L.DomUtil.create('div', 'info legend');
+                    const grades = [0, 10, 20, 50, 100, 200, 500, 1000];
+                    const labels = [];
+                    let from, to;
+                    for (let i = 0; i < grades.length; i++) {
+                        from = grades[i];
+                        to = grades[i + 1];
+                        labels.push(`<i style="background:${this.getColor(from + 1)}"></i> ${from}${to ? `&ndash;${to}` : '+'}`);
+                    }
+                    div.innerHTML = labels.join('<br>');
+                    return div;
+                }.bind(this);
+                legend.addTo(this.map);
+                // This defines and adds a legend control to display legend information on the map.
+            }
+            // Method to define color based on population density
+            getColor(d) {
+                return d > 1000 ? '#800026' :
+					d > 500 ? '#BD0026' :
+                    d > 200 ? '#E31A1C' :
+                    d > 100 ? '#FC4E2A' :
+                    d > 50 ? '#FD8D3C' :
+                    d > 20 ? '#FEB24C' :
+                    d > 10 ? '#FED976' : '#FFEDA0';
+            }
+            // Method to define style for GeoJSON features
+            style(feature) {
+                return {
+					weight: 2,           // Set the line weight to 2
+					opacity: 1,          // Set the opacity to 1 (fully opaque)
+					color: 'white',      // Set the line color to white
+					dashArray: '3',      // Set a dashed line style with a dash pattern
+					fillOpacity: 0.7,    // Set the fill opacity to 0.7 (partially transparent)
+					fillColor: this.getColor(feature.properties.density) // Set the fill color based on density value
+                };
+            }
+            // Method to handle mouseover, mouseout, and click events on GeoJSON features
+            onEachFeature(feature, layer) {
+                layer.on({
+                    mouseover: this.highlightFeature.bind(this), // Bind the event handlers
+                    mouseout: this.resetHighlight.bind(this), // Bind the event handlers
+                    click: this.zoomToFeature.bind(this) // Bind the event handlers
+                });
+            }
+            // Method to highlight a feature on mouseover
+            highlightFeature(e) {
+                const layer = e.target;
+				layer.setStyle({
+					weight: 5,            // Increase line weight on mouseover
+					color: '#666',        // Change line color on mouseover
+					dashArray: '',        // Remove dashArray on mouseover
+					fillOpacity: 0.7      // Set fill opacity on mouseover
+                });
+				layer.bringToFront();     // Bring the highlighted layer to the front
+				this.update(layer.feature.properties); // Update the info control with feature information
+            }
+            // Method to reset the highlight on mouseout
+            resetHighlight(e) {
+				this.geojson.resetStyle(e.target); // Reset the style to its original state on mouseout
+				this.update(); // Update the info control to its default state
+            }
+            // Method to zoom to a feature on click
+            zoomToFeature(e) {
+				this.map.fitBounds(e.target.getBounds()); // Fit the map view to the bounds of the clicked feature
+            }
+            // Method to update the info control with feature information
+            update(props) {
+                this.info._div.innerHTML = `<h4>US Population Density</h4>${props ? `<b>${props.name}</b><br />${props.density} people / mi<sup>2</sup>` : 'Hover over a state'}`;
+            }
+        }
+        // Create an instance of ChoroplethMap and initialize the map
+		const choroplethMap = new ChoroplethMap();
+		choroplethMap.initMap(); // Initialize the choropleth map
+    </script>
+</body>
+</html>
