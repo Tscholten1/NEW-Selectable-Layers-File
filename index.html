@@ -101,6 +101,7 @@
     <script type="text/javascript" src="./data/polygonJSONTEST.js"></script>
     <script type="text/javascript" src="./data/nepalJSONTEST.js"></script>
     <script type="text/javascript" src="./data/statesJSONTEST.js"></script>
+    <script type="text/javascript" src="./data/WI_boundarydata.js"></script>
 	<!-- END: EXAMPLE ADDING MORE LAYERS OF DATA -->
 		
     <!-- These script tags load external JavaScript files for data from relative paths. -->
@@ -129,7 +130,8 @@
                 this.lineOBJECTTEST = null;
                 this.pointOBJECTTEST = null;
                 this.nepalOBJECTTEST = null;
-                this.polygonOBJECTTEST = null;					
+                this.polygonOBJECTTEST = null;
+                this.WI_boundarydataOBJECTTEST = null;
 				this.statesOBJECTTEST = null;					
 				//<!-- END: EXAMPLE ADDING MORE LAYERS OF DATA -->
                 this.info = null;
@@ -275,6 +277,7 @@
                     "PointData": this.pointOBJECT,
                     "LineData": this.lineOBJECT,
                     "polygondata": this.polygonOBJECT,
+                    "WI_boundarydata": this.polygonOBJECT,
                     "statesData": this.statesOBJECT, //<-----------------------YOU MUST ADD A COMMA AT THE END OF THIS LINE TO CONNECT THE PART OF THE ARRAY YOU ARE ADDING TO, SEE LIKE THE LINES ABOVE THIS ONE? NO COMMA IS NEEDED ON THE LAST LINE OF ADDING DATA, SEE BELOW...
 					//<!-- END: ORIGINAL ADDING INITIAL LAYERS OF DATA -->
 					
@@ -283,6 +286,7 @@
                     "PointDataTEST": this.pointOBJECTTEST,
                     "LineDataTEST": this.lineOBJECTTEST,
                     "polygondataTEST": this.polygonOBJECTTEST,
+                    "WI_boundarydata": this.polygonOBJECTTEST,
                     "statesDataTEST": this.statesOBJECTTEST //<------------------------NO COMMA ON THE LAST LINE OF ADDING DATA					
 					//<!-- END: EXAMPLE ADDING MORE LAYERS OF DATA -->					
                 };
